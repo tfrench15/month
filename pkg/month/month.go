@@ -87,7 +87,7 @@ func (m *Month) nextMonth(w http.ResponseWriter, r *http.Request) {
 		next = time.January
 	}
 
-	fmt.Println(w, next.String())
+	fmt.Fprintln(w, next.String())
 }
 
 func encodeJSON(w http.ResponseWriter, data interface{}) error {
