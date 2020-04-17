@@ -53,11 +53,6 @@ func NewMonth() *Month {
 }
 
 func (m *Month) showMonth(w http.ResponseWriter, r *http.Request) {
-	err := encodeJSON(w, m)
-	if err != nil {
-		panic(err)
-	}
-
 	fmt.Fprintln(w, m)
 }
 
