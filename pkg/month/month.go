@@ -37,23 +37,57 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // Routes registers the routes for the Server.
 func (s *Server) routes() {
 	s.mux.HandleFunc("/", s.month.showMonth)
+	s.mux.HandleFunc("/next", s.month.nextMonth)
 }
 
 // Month contains the current month.
 type Month struct {
-	current string
+	current time.Month
 }
 
 // NewMonth returns a new instance of Month.
 func NewMonth() *Month {
 	_, month, _ := time.Now().Date()
 	return &Month{
-		current: month.String(),
+		current: month,
 	}
 }
 
 func (m *Month) showMonth(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, m)
+	fmt.Fprintln(w, m.current.String())
+}
+
+func (m *Month) nextMonth(w http.ResponseWriter, r *http.Request) {
+	var next time.Month
+
+	switch m.current {
+	case time.January:
+		next = time.February
+	case time.February:
+		next = time.March
+	case time.March:
+		next = time.April
+	case time.April:
+		next = time.May
+	case time.May:
+		next = time.June
+	case time.June:
+		next = time.July
+	case time.July:
+		next = time.August
+	case time.August:
+		next = time.September
+	case time.September:
+		next = time.October
+	case time.October:
+		next = time.November
+	case time.November:
+		next = time.December
+	case time.December:
+		next = time.January
+	}
+
+	fmt.Println(w, next.String())
 }
 
 func encodeJSON(w http.ResponseWriter, data interface{}) error {
