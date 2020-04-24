@@ -1,95 +1,54 @@
 package month
 
-import (
-	"encoding/json"
-	"fmt"
-	"net/http"
-	"time"
-
-	"github.com/gorilla/mux"
-)
-
-// Server is the backend month server for MonthAI.
-type Server struct {
-	mux *mux.Router
-
-	month *Month
-}
-
-// NewServer creates and returns a new Server.
-func NewServer() *Server {
-	mux := mux.NewRouter()
-	month := NewMonth()
-
-	return &Server{
-		mux:   mux,
-		month: month,
-	}
-}
-
-// ServeHTTP satisfies the http.Handler interface for Server.
-func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	s.routes()
-
-	s.mux.ServeHTTP(w, r)
-}
-
-// Routes registers the routes for the Server.
-func (s *Server) routes() {
-	s.mux.HandleFunc("/", s.month.showMonth)
-	s.mux.HandleFunc("/next", s.month.nextMonth)
-}
+import "time"
 
 // Month contains the current month.
 type Month struct {
-	current time.Month
+	current string
+	next    string
 }
 
-// NewMonth returns a new instance of Month.
-func NewMonth() *Month {
+// New returns a new instance of a Month.
+func New() *Month {
 	_, month, _ := time.Now().Date()
-	return &Month{
-		current: month,
-	}
-}
 
-func (m *Month) showMonth(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, m.current.String())
-}
+	cur := month.String()
+	var nxt time.Month
 
-func (m *Month) nextMonth(w http.ResponseWriter, r *http.Request) {
-	var next time.Month
-
-	switch m.current {
+	switch month {
 	case time.January:
-		next = time.February
+		nxt = time.February
 	case time.February:
-		next = time.March
+		nxt = time.March
 	case time.March:
-		next = time.April
+		nxt = time.April
 	case time.April:
-		next = time.May
+		nxt = time.May
 	case time.May:
-		next = time.June
+		nxt = time.June
 	case time.June:
-		next = time.July
+		nxt = time.July
 	case time.July:
-		next = time.August
+		nxt = time.August
 	case time.August:
-		next = time.September
+		nxt = time.September
 	case time.September:
-		next = time.October
+		nxt = time.October
 	case time.October:
-		next = time.November
+		nxt = time.November
 	case time.November:
-		next = time.December
+		nxt = time.December
 	case time.December:
-		next = time.January
+		nxt = time.January
 	}
 
-	fmt.Fprintln(w, next.String())
+	return &Month{
+		current: cur,
+		next:    nxt.String(),
+	}
 }
 
-func encodeJSON(w http.ResponseWriter, data interface{}) error {
-	return json.NewEncoder(w).Encode(data)
+// Show returns the current and month and is passed into the Lambda function.
+func (m *Month) Show() (*Month, error) {
+	return m, nil
 }

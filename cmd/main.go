@@ -9,8 +9,7 @@ import (
 func main() {
 	srv := month.NewServer()
 
-	err := http.ListenAndServe(":8080", srv)
-	if err != nil {
+	if err := http.ListenAndServe(":8080", srv); err != nil {
 		panic(err)
 	}
 }
